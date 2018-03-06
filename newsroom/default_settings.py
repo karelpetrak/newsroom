@@ -67,8 +67,8 @@ CORE_APPS = [
     'newsroom.cards',
 ]
 
-SITE_NAME = 'AAP Newsroom'
-COPYRIGHT_HOLDER = 'AAP'
+SITE_NAME = 'Newsroom'
+COPYRIGHT_HOLDER = 'STT'
 COPYRIGHT_NOTICE = ''
 USAGE_TERMS = ''
 
