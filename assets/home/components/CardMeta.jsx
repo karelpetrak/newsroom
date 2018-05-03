@@ -16,8 +16,8 @@ function CardMeta({wordCount, pictureAvailable, source, versioncreated, displayD
         <div className="wire-articles__item__meta-info">
             {slugline && <span className='bold'>{slugline}</span>}
             <span>
-                {source && gettext('Source: {{ source }}', {source}) + ' // '}
-                <span className='bold'>{wordCount}</span> {gettext('words')}
+                {source && `${source} // `}
+                <span>{wordCount}</span> {gettext('words')}
                 {versioncreated && ' // '}
                 {versioncreated &&
                     <time dateTime={fullDate(versioncreated)}>{shortDate(versioncreated)}</time>

@@ -39,12 +39,6 @@ class WireListItem extends React.Component {
         this.setState({previousVersions: !this.state.previousVersions});
     }
 
-    componentDidUpdate(nextProps) {
-        if (nextProps.isActive) {
-            this.articleElem.focus();
-        }
-    }
-
     componentDidMount() {
         if (this.props.isActive) {
             this.articleElem.focus();
@@ -98,7 +92,7 @@ class WireListItem extends React.Component {
                                 <div className='wire-articles__item__meta-info'>
                                     <span className='bold'>{this.slugline}</span>
                                     <span>{gettext('Source: {{ source }}', {source: item.source})}
-                                        {' // '}<span className='bold'>{this.wordCount}</span> {gettext('words')}
+                                        {' // '}<span>{this.wordCount}</span> {gettext('words')}
                                         {' // '}<time dateTime={fullDate(item.versioncreated)}>{shortDate(item.versioncreated)}</time>
                                     </span>
                                 </div>

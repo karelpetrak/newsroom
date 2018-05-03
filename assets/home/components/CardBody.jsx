@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { gettext, shortDate } from 'utils';
+import { shortDate } from 'utils';
+
 
 function CardBody({item, displayMeta, displayDescription, displaySource}) {
     return (<div className="card-body">
@@ -15,7 +16,8 @@ function CardBody({item, displayMeta, displayDescription, displaySource}) {
                 <div className="wire-articles__item__meta-info">
                     <span className="bold">{item.slugline}</span>
                     {displaySource &&
-                    <span>{gettext('Source: {{ source }}', {source: item.source})} {'//'} {shortDate(item.versioncreated)}</span>}
+                    <span>{item.source} {'//'} </span>}
+                    <span>{shortDate(item.versioncreated)}</span>
                 </div>
             </div>
         )}

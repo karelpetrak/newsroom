@@ -6,6 +6,7 @@ from superdesk.default_settings import (   # noqa
     CONTENTAPI_MONGO_URI,
     CONTENTAPI_ELASTICSEARCH_URL,
     CONTENTAPI_ELASTICSEARCH_INDEX,
+    ELASTICSEARCH_URL,
     ELASTICSEARCH_SETTINGS,
     ELASTIC_DATE_FORMAT,
     CELERY_BROKER_URL,
@@ -47,6 +48,7 @@ BLUEPRINTS = [
     'newsroom.navigations',
     'newsroom.cards',
     'newsroom.reports',
+    'newsroom.public',
 ]
 
 CORE_APPS = [
@@ -67,12 +69,14 @@ CORE_APPS = [
     'newsroom.navigations',
     'newsroom.cards',
     'newsroom.reports',
+    'newsroom.public',
 ]
 
 SITE_NAME = 'AAP Newsroom'
 COPYRIGHT_HOLDER = 'AAP'
 COPYRIGHT_NOTICE = ''
 USAGE_TERMS = ''
+CONTACT_ADDRESS = 'https://www.aap.com.au/contact/sales-inquiries/'
 
 TEMPLATES_AUTO_RELOAD = True
 
@@ -84,8 +88,8 @@ if DEFAULT_TIMEZONE is None:
 
 BABEL_DEFAULT_TIMEZONE = DEFAULT_TIMEZONE
 
-WEBPACK_MANIFEST_PATH = os.path.join(os.path.dirname(__file__), 'static', 'manifest.json')
-WEBPACK_ASSETS_URL = os.environ.get('ASSETS_URL', '/static/')
+WEBPACK_MANIFEST_PATH = os.path.join(os.path.dirname(__file__), 'static', 'dist', 'manifest.json')
+WEBPACK_ASSETS_URL = os.environ.get('ASSETS_URL', '/static/dist/')
 WEBPACK_SERVER_URL = os.environ.get('WEBPACK_SERVER_URL', 'http://localhost:8080/')
 
 # How many days a new account can stay active before it is approved by admin
@@ -133,6 +137,11 @@ CACHE_REDIS_URL = os.environ.get('REDIS_URL', 'redis://localhost:6379')
 RECAPTCHA_PUBLIC_KEY = os.environ.get('RECAPTCHA_PUBLIC_KEY')
 RECAPTCHA_PRIVATE_KEY = os.environ.get('RECAPTCHA_PRIVATE_KEY')
 
+# Filter tab behaviour
+# If true, aggregations will be against all content all the time
+# If false, aggregations will change by filters applied
+FILTER_BY_POST_FILTER = False
+
 # Base64 Encoded Token
 AAPPHOTOS_TOKEN = os.environ.get('AAPPHOTOS_TOKEN')
 
@@ -144,6 +153,12 @@ HOMEPAGE_CAROUSEL = [{
     'source': 'https://photos-api.aap.com.au/api/v3/Galleries/Newsroom/AUSTRALIAN%20SPORT',
     'count': 2
 }]
+
+# List of filters to remove matching stories when news only switch is turned on
+NEWS_ONLY_FILTERS = [
+    {'match': {'genre.code': 'Results (sport)'}},
+    {'match': {'source': 'PMF'}},
+]
 
 # the lifetime of a permanent session in seconds
 PERMANENT_SESSION_LIFETIME = 604800  # 7 days

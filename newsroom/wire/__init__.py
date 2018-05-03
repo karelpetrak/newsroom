@@ -31,9 +31,9 @@ def init_app(app):
 
     superdesk.register_resource('wire_search', WireSearchResource, WireSearchService, _app=app)
 
-    app.sidenav('Home', 'wire.index', 'dashboard')
+    app.sidenav('Home', 'wire.index', 'home')
     app.sidenav('Wire', 'wire.wire', 'text')
-    app.sidenav('Bookmarks', 'wire.bookmarks', 'bookmark')
+    app.sidenav('Saved Items', 'wire.bookmarks', 'bookmark')
 
     from .formatters import TextFormatter, NITFFormatter, NewsMLG2Formatter
     app.add_download_formatter('text', TextFormatter(), gettext('Plain Text'))
@@ -42,3 +42,4 @@ def init_app(app):
 
     app.add_template_global(utils.get_picture, 'get_picture')
     app.add_template_global(utils.get_caption, 'get_caption')
+    app.add_template_global(utils.get_date, 'get_date')

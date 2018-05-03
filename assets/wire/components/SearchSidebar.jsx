@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import classNames from 'classnames';
 import { connect } from 'react-redux';
 import { gettext } from 'utils';
+import { setActiveFilterTab, getActiveFilterTab } from '../utils';
 
 import {
     toggleNavigation,
@@ -18,13 +19,15 @@ class SearchSidebar extends React.Component {
     constructor(props) {
         super(props);
         this.tabs = [
-            {label: gettext('Navigation'), content: NavigationTab},
+            {label: gettext('Topics'), content: NavigationTab},
+            {label: gettext('My Topics'), content: TopicsTab},
             {label: gettext('Filters'), content: FiltersTab},
         ];
-        this.state = {active: this.tabs[0]};
+        this.state = {active: getActiveFilterTab() || this.tabs[0].label};
         this.toggleNavigation = this.toggleNavigation.bind(this);
         this.toggleFilter = this.toggleFilter.bind(this);
         this.resetFilter = this.resetFilter.bind(this);
+        this.manageTopics = this.manageTopics.bind(this);
     }
 
     toggleNavigation(event, navigation) {
@@ -42,40 +45,50 @@ class SearchSidebar extends React.Component {
         this.props.dispatch(resetFilter());
     }
 
+    manageTopics(e) {
+        e.preventDefault();
+        document.dispatchEvent(window.manageTopics);
+    }
+
     render() {
         return (
             <div className='wire-column__nav__items'>
                 <ul className='nav justify-content-center' id='pills-tab' role='tablist'>
                     {this.tabs.map((tab) => (
                         <li className='wire-column__nav__tab nav-item' key={tab.label}>
-                            <a className={`nav-link ${this.state.active === tab && 'active'}`}
+                            <a className={`nav-link ${this.state.active === tab.label && 'active'}`}
                                 role='tab'
                                 href=''
                                 onClick={(event) => {
                                     event.preventDefault();
-                                    this.setState({active: tab});
+                                    setActiveFilterTab(tab.label);
+                                    this.setState({active: tab.label});
                                 }}>{tab.label}</a>
                         </li>
                     ))}
                 </ul>
-                <div className='tab-content' key={gettext('Navigation')}>
-                    <div className={classNames('tab-pane', 'fade', {'show active': this.state.active === this.tabs[0]})} role='tabpanel'>
+                <div className='tab-content' key={gettext('Topics')}>
+                    <div className={classNames('tab-pane', 'fade', {'show active': this.state.active === this.tabs[0].label})} role='tabpanel'>
                         <NavigationTab
                             navigations={this.props.navigations}
                             activeNavigation={this.props.activeNavigation}
                             toggleNavigation={this.toggleNavigation}
                         />
-                        {this.props.topics.length && <span className='wire-column__nav__divider'></span>}
+                    </div>
+                </div>
+                <div className='tab-content' key={gettext('My Topics')}>
+                    <div className={classNames('tab-pane', 'fade', {'show active': this.state.active === this.tabs[1].label})} role='tabpanel'>
                         <TopicsTab
                             dispatch={this.props.dispatch}
                             topics={this.props.topics}
                             newItemsByTopic={this.props.newItemsByTopic}
                             activeTopic={this.props.activeTopic}
+                            manageTopics={this.manageTopics}
                         />
                     </div>
                 </div>
                 <div className='tab-content' key={gettext('Filters')}>
-                    <div className={classNames('tab-pane', 'fade', {'show active': this.state.active === this.tabs[1]})} role='tabpanel'>
+                    <div className={classNames('tab-pane', 'fade', {'show active': this.state.active === this.tabs[2].label})} role='tabpanel'>
                         <FiltersTab
                             activeFilter={this.props.activeFilter}
                             aggregations={this.props.aggregations}

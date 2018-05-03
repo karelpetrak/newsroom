@@ -1,9 +1,10 @@
+#!/usr/bin/env python
 
-from app import Newsroom
 from flask_script import Manager
+from newsroom import Newsroom
 from superdesk import get_resource_service
 from newsroom.elastic_utils import rebuild_elastic_index
-
+from newsroom.mongo_utils import index_elastic_from_mongo
 
 app = Newsroom()
 manager = Manager(app)
@@ -44,6 +45,20 @@ def elastic_rebuild():
 @manager.command
 def elastic_init():
     app.data.init_elastic(app)
+
+
+@manager.command
+def index_from_mongo():
+    print('Checking if elastic index exists, a new one will be created if not')
+    app.data.init_elastic(app)
+    print('Elastic index check has been completed')
+    index_elastic_from_mongo()
+
+
+@manager.command
+def content_reset():
+    app.data.remove('items')
+    app.data.remove('items_versions')
 
 
 if __name__ == "__main__":

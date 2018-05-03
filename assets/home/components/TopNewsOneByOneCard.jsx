@@ -21,8 +21,7 @@ const getTopNewsPanel = (item, picture, openItem, cardId) => {
                     wordCount={wordCount(item)}
                     source={item.source}
                     versioncreated={item.versioncreated}
-                    displayDivider={true}
-                    slugline={item.slugline}
+                    displayDivider={false}
                 />
                 <div className='wire-articles__item__text'>
                     <p className='card-text small'>{item.description_text}</p>

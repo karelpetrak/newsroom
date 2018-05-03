@@ -1,7 +1,7 @@
 import {gettext} from '../utils';
 import {
     bookmarkItems,
-    copyPreviewContents,
+    previewAndCopy,
     downloadItems,
     openItem,
     printItem,
@@ -37,7 +37,7 @@ export function getItemActions(dispatch) {
             name: gettext('Copy'),
             icon: 'copy',
             visited: (user, item) => user && item && item.copies &&  item.copies.includes(user),
-            action: (item) => dispatch(copyPreviewContents(item)),
+            action: (item) => dispatch(previewAndCopy(item)),
         },
         {
             name: gettext('Download'),
@@ -48,7 +48,7 @@ export function getItemActions(dispatch) {
             action: (items) => dispatch(downloadItems(items)),
         },
         {
-            name: gettext('Bookmark'),
+            name: gettext('Save'),
             icon: 'bookmark-add',
             multi: true,
             shortcut: true,
@@ -56,7 +56,7 @@ export function getItemActions(dispatch) {
             action: (items) => dispatch(bookmarkItems(items)),
         },
         {
-            name: gettext('Remove from bookmarks'),
+            name: gettext('Unsave'),
             icon: 'bookmark-remove',
             multi: true,
             shortcut: true,

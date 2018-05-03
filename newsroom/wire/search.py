@@ -5,7 +5,7 @@ import superdesk
 
 from datetime import datetime, timedelta
 from werkzeug.exceptions import Forbidden
-from flask import json, abort
+from flask import current_app as app, json, abort
 from eve.utils import ParsedRequest
 from flask_babel import gettext
 from newsroom.auth import get_user
@@ -185,18 +185,35 @@ class WireSearchService(newsroom.Service):
             query['bool']['must_not'].append({'term': {'pubstatus': 'canceled'}})
 
         if req.args.get('newsOnly'):
-            query['bool']['must_not'].append({'match': {'genre.code': 'Results (sport)'}})
-            query['bool']['must_not'].append({'match': {'genre.code': 'Broadcast Script'}})
-            query['bool']['must_not'].append({'match': {'source': 'PMF'}})
+            for f in app.config.get('NEWS_ONLY_FILTERS', []):
+                query['bool']['must_not'].append(f)
 
         if req.args.get('bookmarks'):
             _set_bookmarks_query(query, req.args['bookmarks'])
+
+        filters = None
+
+        if req.args.get('filter'):
+            filters = json.loads(req.args['filter'])
+
+        if not app.config.get('FILTER_BY_POST_FILTER', False):
+            if filters:
+                query['bool']['must'] += _filter_terms(filters)
+
+            if req.args.get('created_from') or req.args.get('created_to'):
+                query['bool']['must'].append(_versioncreated_range(req.args))
 
         source = {'query': query}
         source['sort'] = [{'versioncreated': 'desc'}]
         source['size'] = 25
         source['from'] = int(req.args.get('from', 0))
-        source['post_filter'] = {'bool': {'must': []}}
+
+        if app.config.get('FILTER_BY_POST_FILTER', False):
+            if filters:
+                source['post_filter'] = {'bool': {'must': []}}
+                source['post_filter']['bool']['must'] += _filter_terms(filters)
+            if req.args.get('created_from') or req.args.get('created_to'):
+                source['post_filter']['bool']['must'].append(_versioncreated_range(req.args))
 
         if source['from'] >= 1000:
             # https://www.elastic.co/guide/en/elasticsearch/guide/current/pagination.html#pagination
@@ -204,14 +221,6 @@ class WireSearchService(newsroom.Service):
 
         if not source['from']:  # avoid aggregations when handling pagination
             source['aggs'] = aggregations
-
-        if req.args.get('filter'):
-            filters = json.loads(req.args['filter'])
-            if filters:
-                source['post_filter']['bool']['must'] += _filter_terms(filters)
-
-        if req.args.get('created_from') or req.args.get('created_to'):
-            source['post_filter']['bool']['must'].append(_versioncreated_range(req.args))
 
         internal_req = ParsedRequest()
         internal_req.args = {'source': json.dumps(source)}
