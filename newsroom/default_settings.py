@@ -26,7 +26,9 @@ DOMAIN = {}
 
 X_DOMAINS = '*'
 X_MAX_AGE = 24 * 3600
-X_HEADERS = ['Content-Type', 'Authorization', 'If-Match']
+X_HEADERS = ['Content-Type', 'Accept', 'If-Match', 'Access-Control-Allow-Origin', 'Authorization']
+X_EXPOSE_HEADERS = ['Access-Control-Allow-Origin']
+X_ALLOW_CREDENTIALS = True
 
 URL_PREFIX = 'api'
 
@@ -77,6 +79,9 @@ COPYRIGHT_HOLDER = 'AAP'
 COPYRIGHT_NOTICE = ''
 USAGE_TERMS = ''
 CONTACT_ADDRESS = 'https://www.aap.com.au/contact/sales-inquiries/'
+PRIVACY_POLICY = 'https://www.aap.com.au/legal/'
+TERMS_AND_CONDITIONS = 'https://www.aap.com.au/legal/'
+
 
 TEMPLATES_AUTO_RELOAD = True
 
